@@ -116,11 +116,12 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({ user, visible, onHide, on
   }
 
   const dialogFooter = (
-    <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'flex-end' }}>
+    <div className="flex gap-3 justify-end p-4">
       {isEditing ? (
         <>
           <Button
             label="Cancelar"
+            icon="pi pi-times"
             onClick={() => {
               setIsEditing(false)
               if (user.titular) {
@@ -134,6 +135,7 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({ user, visible, onHide, on
           />
           <Button
             label={loading ? "Guardando..." : "Guardar"}
+            icon={loading ? "pi pi-spinner pi-spin" : "pi pi-check"}
             onClick={handleSave}
             loading={loading}
             disabled={loading || !isFormValid()}
@@ -144,11 +146,13 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({ user, visible, onHide, on
         <>
           <Button
             label="Modificar Datos"
+            icon="pi pi-pencil"
             onClick={() => setIsEditing(true)}
             severity="info"
           />
           <Button
             label="Cerrar"
+            icon="pi pi-times"
             onClick={onHide}
             severity="secondary"
           />
@@ -167,49 +171,31 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({ user, visible, onHide, on
       visible={visible}
       onHide={onHide}
       footer={dialogFooter}
-      style={{ width: '90vw', maxWidth: '600px' }}
+      className="w-[90vw] max-w-3xl"
       modal
       dismissableMask
     >
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+      <div className="flex flex-col gap-5 p-4">
         {/* Datos Personales (No editables) */}
-        <Panel header="Datos Personales" toggleable>
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
-            gap: '1rem'
-          }}>
-            <div>
-              <label style={{ 
-                fontSize: '0.875rem', 
-                color: '#6b7280', 
-                fontWeight: '500' 
-              }}>
+        <Panel 
+          header="Datos Personales"
+          toggleable
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-2">
+            <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+              <label className="text-xs text-gray-600 font-semibold uppercase tracking-wide mb-1 block">
                 Nombre Completo
               </label>
-              <p style={{ 
-                margin: '0.25rem 0 0 0', 
-                fontWeight: 'bold',
-                color: '#374151'
-              }}>
+              <p className="mt-1 mb-0 font-bold text-gray-800 text-lg">
                 {user.titular.nom_tit} {user.titular.fir_ape_tit} {user.titular.sec_ape_tit}
               </p>
             </div>
             
-            <div>
-              <label style={{ 
-                fontSize: '0.875rem', 
-                color: '#6b7280', 
-                fontWeight: '500' 
-              }}>
+            <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+              <label className="text-xs text-gray-600 font-semibold uppercase tracking-wide mb-1 block">
                 DNI
               </label>
-              <p style={{ 
-                margin: '0.25rem 0 0 0', 
-                fontFamily: 'monospace',
-                fontWeight: 'bold',
-                color: '#374151'
-              }}>
+              <p className="mt-1 mb-0 font-mono font-bold text-gray-800 text-lg">
                 {user.titular.dni_tit}
               </p>
             </div>
@@ -217,77 +203,70 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({ user, visible, onHide, on
         </Panel>
 
         {/* Información de Contacto (Editable) */}
-        <Panel header="Información de Contacto" toggleable>
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', 
-            gap: '1.5rem'
-          }}>
+        <Panel 
+          header={
+            <div className="flex items-center gap-2">
+              <i className="pi pi-envelope text-green-600"></i>
+              <span className="font-bold">Información de Contacto</span>
+              {isEditing && <Tag value="Editando" severity="warning" className="ml-2" />}
+            </div>
+          }
+          toggleable
+          className=""
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-2">
             {isEditing ? (
               <>
-                <FloatLabel>
-                  <InputText
-                    id="eml_tit"
-                    type="email"
-                    value={editData.eml_tit}
-                    onChange={(e) => handleInputChange('eml_tit', e.target.value)}
-                    style={{ width: '100%' }}
-                  />
-                  <label htmlFor="eml_tit">
-                    <i className="pi pi-envelope" style={{ marginRight: '0.5rem' }}></i>
-                    Correo Electrónico
-                  </label>
-                </FloatLabel>
+                <div className="bg-white p-4 rounded-lg shadow-sm border-l-4 border-blue-500">
+                  <FloatLabel>
+                    <InputText
+                      id="eml_tit"
+                      type="email"
+                      value={editData.eml_tit}
+                      onChange={(e) => handleInputChange('eml_tit', e.target.value)}
+                      className="w-full"
+                    />
+                    <label htmlFor="eml_tit">
+                      <i className="pi pi-envelope mr-2"></i>
+                      Correo Electrónico
+                    </label>
+                  </FloatLabel>
+                </div>
 
-                <FloatLabel>
-                  <InputText
-                    id="tlf_tit"
-                    value={editData.tlf_tit}
-                    onChange={(e) => handleInputChange('tlf_tit', e.target.value)}
-                    style={{ width: '100%', fontFamily: 'monospace' }}
-                    maxLength={15}
-                  />
-                  <label htmlFor="tlf_tit">
-                    <i className="pi pi-phone" style={{ marginRight: '0.5rem' }}></i>
-                    Teléfono
-                  </label>
-                </FloatLabel>
+                <div className="bg-white p-4 rounded-lg shadow-sm border-l-4 border-green-500">
+                  <FloatLabel>
+                    <InputText
+                      id="tlf_tit"
+                      value={editData.tlf_tit}
+                      onChange={(e) => handleInputChange('tlf_tit', e.target.value)}
+                      className="w-full font-mono"
+                      maxLength={15}
+                    />
+                    <label htmlFor="tlf_tit">
+                      <i className="pi pi-phone mr-2"></i>
+                      Teléfono
+                    </label>
+                  </FloatLabel>
+                </div>
               </>
             ) : (
               <>
-                <div>
-                  <label style={{ 
-                    fontSize: '0.875rem', 
-                    color: '#6b7280', 
-                    fontWeight: '500' 
-                  }}>
-                    <i className="pi pi-envelope" style={{ marginRight: '0.5rem' }}></i>
+                <div className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 border-l-4 border-blue-500">
+                  <label className="text-xs text-blue-600 font-semibold uppercase tracking-wide mb-1 flex items-center gap-2">
+                    <i className="pi pi-envelope"></i>
                     Correo Electrónico
                   </label>
-                  <p style={{ 
-                    margin: '0.25rem 0 0 0', 
-                    fontWeight: 'bold',
-                    color: '#374151'
-                  }}>
+                  <p className="mt-1 mb-0 font-bold text-gray-800 text-base break-all">
                     {user.titular.eml_tit}
                   </p>
                 </div>
                 
-                <div>
-                  <label style={{ 
-                    fontSize: '0.875rem', 
-                    color: '#6b7280', 
-                    fontWeight: '500' 
-                  }}>
-                    <i className="pi pi-phone" style={{ marginRight: '0.5rem' }}></i>
+                <div className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 border-l-4 border-green-500">
+                  <label className="text-xs text-green-600 font-semibold uppercase tracking-wide mb-1 flex items-center gap-2">
+                    <i className="pi pi-phone"></i>
                     Teléfono
                   </label>
-                  <p style={{ 
-                    margin: '0.25rem 0 0 0', 
-                    fontFamily: 'monospace',
-                    fontWeight: 'bold',
-                    color: '#374151'
-                  }}>
+                  <p className="mt-1 mb-0 font-mono font-bold text-gray-800 text-base">
                     {user.titular.tlf_tit}
                   </p>
                 </div>
@@ -297,44 +276,26 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({ user, visible, onHide, on
         </Panel>
 
         {/* Información de Cuenta */}
-        <Panel header="Información de Cuenta" toggleable>
-          <div style={{ 
-            display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
-            gap: '1rem'
-          }}>
-            <div>
-              <label style={{ 
-                fontSize: '0.875rem', 
-                color: '#6b7280', 
-                fontWeight: '500' 
-              }}>
+        <Panel 
+          header="Información de Cuenta"
+          toggleable
+        >
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-2">
+            <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+              <label className="text-xs text-gray-600 font-semibold uppercase tracking-wide mb-1 block">
                 Tipo de Cuenta
               </label>
-              <div style={{ margin: '0.25rem 0 0 0' }}>
-                <Tag value={user.tpo_cta} severity="info" />
+              <div className="mt-1">
+                <Tag value={user.tpo_cta} severity="info" className="text-sm font-bold" />
               </div>
             </div>
             
-            <div>
-              <label style={{ 
-                fontSize: '0.875rem', 
-                color: '#6b7280', 
-                fontWeight: '500' 
-              }}>
+            <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+              <label className="text-xs text-gray-600 font-semibold uppercase tracking-wide mb-1 block">
                 Número de Cuenta
               </label>
-              <div style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '0.5rem',
-                margin: '0.25rem 0 0 0'
-              }}>
-                <span style={{ 
-                  fontFamily: 'monospace',
-                  fontWeight: 'bold',
-                  color: '#374151'
-                }}>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="font-mono font-bold text-gray-800 text-base">
                   {user.nro_cta}
                 </span>
                 <Button
@@ -348,26 +309,12 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({ user, visible, onHide, on
               </div>
             </div>
 
-            <div>
-              <label style={{ 
-                fontSize: '0.875rem', 
-                color: '#6b7280', 
-                fontWeight: '500' 
-              }}>
+            <div className="bg-gray-50 p-4 rounded-lg shadow-sm">
+              <label className="text-xs text-gray-600 font-semibold uppercase tracking-wide mb-1 block">
                 CCI
               </label>
-              <div style={{ 
-                display: 'flex', 
-                alignItems: 'center', 
-                gap: '0.5rem',
-                margin: '0.25rem 0 0 0'
-              }}>
-                <span style={{ 
-                  fontFamily: 'monospace',
-                  fontWeight: 'bold',
-                  color: '#374151',
-                  fontSize: '0.875rem'
-                }}>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="font-mono font-bold text-gray-800 text-sm">
                   {user.cci_cta}
                 </span>
                 <Button
@@ -381,20 +328,12 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({ user, visible, onHide, on
               </div>
             </div>
 
-            <div>
-              <label style={{ 
-                fontSize: '0.875rem', 
-                color: '#6b7280', 
-                fontWeight: '500' 
-              }}>
+            <div className="bg-green-50 p-4 rounded-lg shadow-sm">
+              <label className="text-xs text-green-700 font-semibold uppercase tracking-wide mb-1 flex items-center gap-1">
+                <i className="pi pi-dollar"></i>
                 Saldo Actual
               </label>
-              <p style={{ 
-                margin: '0.25rem 0 0 0', 
-                fontSize: '1.25rem',
-                fontWeight: 'bold',
-                color: '#059669'
-              }}>
+              <p className="mt-1 mb-0 text-2xl font-bold text-emerald-600">
                 {formatCurrency(user.sld_cta)}
               </p>
             </div>

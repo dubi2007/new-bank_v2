@@ -106,28 +106,20 @@ const DashboardPage: React.FC = () => {
   }
 
   const toolbarStart = (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-      <Avatar 
-        icon="pi pi-user" 
-        style={{ 
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-          color: 'white'
-        }}
-      />
-      <div>
-        <h3 style={{ 
-          fontSize: '1.1rem', 
-          fontWeight: 'bold', 
-          color: '#374151',
-          margin: 0
-        }}>
+    <div className="flex items-center gap-4 group">
+      <div className="relative">
+        <Avatar 
+          icon="pi pi-user" 
+          className="bg-gradient-to-br from-blue-600 to-purple-600 text-white shadow-lg ring-2 ring-blue-200 transition-all duration-300 group-hover:scale-110 group-hover:shadow-xl"
+        />
+        <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+      </div>
+      <div className="transition-all duration-200">
+        <h3 className="text-lg font-bold text-gray-800 m-0 tracking-tight">
           {user.titular?.nom_tit} {user.titular?.fir_ape_tit}
         </h3>
-        <p style={{ 
-          fontSize: '0.875rem', 
-          color: '#6b7280',
-          margin: 0
-        }}>
+        <p className="text-sm text-gray-500 m-0 flex items-center gap-1">
+          <i className="pi pi-envelope text-xs"></i>
           {user.titular?.eml_tit}
         </p>
       </div>
@@ -135,7 +127,7 @@ const DashboardPage: React.FC = () => {
   )
 
   const toolbarEnd = (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+    <div className="flex items-center gap-2">
       {currentView !== 'home' && (
         <Button
           icon="pi pi-home"
@@ -143,6 +135,7 @@ const DashboardPage: React.FC = () => {
           onClick={() => setCurrentView('home')}
           severity="info"
           size="small"
+          className="hover:scale-105 transition-transform duration-200 shadow-md hover:shadow-lg"
         />
       )}
       <Button
@@ -151,6 +144,7 @@ const DashboardPage: React.FC = () => {
         onClick={() => setShowUserModal(true)}
         severity="secondary"
         size="small"
+        className="hover:scale-105 transition-transform duration-200 shadow-md hover:shadow-lg"
       />
       <Button
         icon="pi pi-sign-out"
@@ -158,31 +152,34 @@ const DashboardPage: React.FC = () => {
         onClick={logout}
         severity="danger"
         size="small"
+        className="hover:scale-105 transition-transform duration-200 shadow-md hover:shadow-lg"
       />
     </div>
   )
 
   const renderHome = () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+    <div className="flex flex-col gap-6">
       {/* Información del Usuario */}
-      <Panel header="Información del usuario" style={{ backgroundColor: '#e0f2fe' }}>
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
-          gap: '1rem',
-          alignItems: 'center'
-        }}>
-          <div>
-            <strong>BIENVENIDO:</strong> {user.titular?.nom_tit}
+      <Panel 
+        header="Información del usuario" 
+        className=" from-blue-50 to-indigo-50   shadow-lg rounded-xl "
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-2">
+          <div className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 border-l-4 border-blue-500">
+            <div className="text-xs text-gray-500 mb-1 font-medium">BIENVENIDO</div>
+            <div className="font-bold text-gray-800 text-lg">{user.titular?.nom_tit}</div>
           </div>
-          <div>
-            <strong>TIPO DE CUENTA:</strong> {user.tpo_cta}
+          <div className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 border-l-4 border-purple-500">
+            <div className="text-xs text-gray-500 mb-1 font-medium">TIPO DE CUENTA</div>
+            <div className="font-bold text-gray-800 text-lg">{user.tpo_cta}</div>
           </div>
-          <div style={{ fontFamily: 'monospace' }}>
-            <strong>NRO DE CUENTA:</strong> {user.nro_cta}
+          <div className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 border-l-4 border-indigo-500">
+            <div className="text-xs text-gray-500 mb-1 font-medium">NRO DE CUENTA</div>
+            <div className="font-mono font-bold text-gray-800 text-lg">{user.nro_cta}</div>
           </div>
-          <div>
-            <strong>SALDO ACTUAL:</strong> {formatCurrency(user.sld_cta)}
+          <div className="bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 border-l-4 border-green-500">
+            <div className="text-xs text-gray-500 mb-1 font-medium">SALDO ACTUAL</div>
+            <div className="font-bold text-green-600 text-lg">{formatCurrency(user.sld_cta)}</div>
           </div>
         </div>
       </Panel>
@@ -190,96 +187,78 @@ const DashboardPage: React.FC = () => {
       {/* Saldo Principal */}
       <Card 
         header={
-          <div style={{ 
-            background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-            color: 'white',
-            padding: '1.5rem',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between'
-          }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+            
+          <div className="relative  bg-gray-500 text-white p-6 flex items-center justify-between overflow-hidden rounded-t-xl">
+            {/* Efectos decorativos */}
+            <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-10 rounded-full blur-2xl"></div>
+            <div className="absolute bottom-0 left-0 w-24 h-24 bg-white opacity-5 rounded-full blur-xl"></div>
+            
+            <div className="flex items-center gap-4 relative z-10">
               <Avatar 
                 icon="pi pi-chart-line" 
-                style={{ 
-                  backgroundColor: 'rgba(255,255,255,0.2)',
-                  color: 'white'
-                }}
+                className="bg-white/30 text-white shadow-lg backdrop-blur-sm border border-white/40"
+                size="large"
               />
               <div>
-                <h2 style={{ margin: 0, fontSize: '1.5rem' }}>Saldo Disponible</h2>
-                <p style={{ margin: 0, opacity: 0.9 }}>Tu dinero siempre seguro</p>
+                <h2 className="m-0 text-2xl font-bold tracking-tight drop-shadow-md">Saldo Disponible</h2>
+                <p className="m-0 opacity-95 text-sm font-medium">Tu dinero siempre seguro</p>
               </div>
             </div>
             <Button
               icon={showBalance ? "pi pi-eye-slash" : "pi pi-eye"}
               onClick={() => setShowBalance(!showBalance)}
-              style={{ 
-                backgroundColor: 'rgba(255,255,255,0.2)',
-                border: 'none'
-              }}
+              className="bg-white/20 border-none hover:bg-white/30 transition-all duration-200 hover:scale-110"
               rounded
             />
           </div>
         }
-        style={{ textAlign: 'center' }}
+        className="text-center shadow-xl hover:shadow-2xl transition-shadow duration-300 border-0"
       >
-        <div style={{ padding: '2rem' }}>
-          <div style={{ 
-            fontSize: showBalance ? '3rem' : '2rem', 
-            fontWeight: 'bold',
-            color: '#374151',
-            marginBottom: '1rem',
-            transition: 'all 0.3s ease'
-          }}>
+        <div className="p-8 bg-gradient-to-br from-gray-50 to-blue-50">
+          <div className={`font-bold text-gray-800 mb-4 transition-all duration-300 ${
+            showBalance ? 'text-5xl' : 'text-3xl'
+          }`}>
             {showBalance ? formatCurrency(user.sld_cta) : '••••••'}
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-            <div style={{ 
-              width: '8px', 
-              height: '8px', 
-              backgroundColor: '#10b981', 
-              borderRadius: '50%' 
-            }}></div>
-            <span style={{ color: '#10b981', fontWeight: '500' }}>Cuenta Activa</span>
+          <div className="inline-flex items-center justify-center gap-2 bg-green-50 px-4 py-2 rounded-full">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <span className="text-green-700 font-semibold text-sm">Cuenta Activa</span>
           </div>
         </div>
       </Card>
 
       {/* Operaciones Disponibles */}
-      <Panel header="Operaciones Disponibles">
-        <div style={{ 
-          display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
-          gap: '1rem' 
-        }}>
+      <Panel 
+        header="Operaciones Disponibles"
+      >
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-2">
           <Button
             icon="pi pi-plus-circle"
             label="Depositar"
             onClick={() => setCurrentView('deposit')}
             severity="success"
-            style={{ padding: '1rem', height: '4rem' }}
+            className="p-4 h-20 text-base font-semibold"
           />
           <Button
             icon="pi pi-minus-circle"
             label="Retirar"
             onClick={() => setCurrentView('withdraw')}
             severity="danger"
-            style={{ padding: '1rem', height: '4rem' }}
+            className="p-4 h-20 text-base font-semibold"
           />
           <Button
             icon="pi pi-history"
             label="Historial"
             onClick={() => setCurrentView('history')}
             severity="info"
-            style={{ padding: '1rem', height: '4rem' }}
+            className="p-4 h-20 text-base font-semibold"
           />
           <Button
             icon="pi pi-user-edit"
             label="Modificar Datos"
             onClick={() => setShowUserModal(true)}
             severity="secondary"
-            style={{ padding: '1rem', height: '4rem' }}
+            className="p-4 h-20 text-base font-semibold"
           />
         </div>
       </Panel>
@@ -287,9 +266,12 @@ const DashboardPage: React.FC = () => {
   )
 
   const renderHistory = () => (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-        <h2 style={{ margin: 0, color: '#374151' }}>Historial de Operaciones</h2>
+    <div className="space-y-4">
+      <div className="flex justify-between items-center bg-gradient-to-r from-slate-50 to-gray-50 p-4 rounded-xl border border-gray-200 shadow-sm">
+        <h2 className="m-0 text-gray-800 text-2xl font-bold flex items-center gap-3">
+          <i className="pi pi-history text-blue-500"></i>
+          Historial de Operaciones
+        </h2>
         <Button
           icon="pi pi-refresh"
           label="Actualizar"
@@ -297,10 +279,11 @@ const DashboardPage: React.FC = () => {
           loading={loading}
           severity="info"
           size="small"
+          className="hover:scale-105 transition-transform duration-200 shadow-md hover:shadow-lg"
         />
       </div>
 
-      <Card>
+      <Card className="shadow-xl border-0">
         <DataTable 
           value={operations} 
           loading={loading}
@@ -355,19 +338,14 @@ const DashboardPage: React.FC = () => {
   }
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc' }}>
+    <div className="w-full min-h-screen bg-gray-50">
       <Toolbar 
         start={toolbarStart}
         end={toolbarEnd}
-        style={{ 
-          backgroundColor: 'white',
-          borderBottom: '1px solid #e5e7eb',
-          boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
-          marginBottom: '2rem'
-        }}
+        className="mb-6"
       />
 
-      <div style={{ padding: '0 2rem 2rem 2rem', maxWidth: '1200px', margin: '0 auto' }}>
+      <div className="px-4 md:px-8 pb-8 max-w-7xl mx-auto w-full">
         {renderCurrentView()}
       </div>
 
