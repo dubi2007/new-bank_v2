@@ -51,7 +51,7 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({ user, visible, onHide, on
           severity: 'success',
           summary: 'Datos actualizados',
           detail: 'Tu información ha sido actualizada correctamente',
-          life: 3000
+          life: 6000
         })
         setIsEditing(false)
         onUserUpdated()
@@ -64,7 +64,7 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({ user, visible, onHide, on
           severity: 'error',
           summary: 'Error al actualizar',
           detail: 'No se pudieron actualizar los datos',
-          life: 4000
+          life: 7000
         })
       }
     } catch (error) {
@@ -72,7 +72,7 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({ user, visible, onHide, on
         severity: 'error',
         summary: 'Error de conexión',
         detail: 'No se pudo conectar al servidor',
-        life: 4000
+        life: 7000
       })
     } finally {
       setLoading(false)
@@ -95,7 +95,7 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({ user, visible, onHide, on
       severity: 'info',
       summary: 'Copiado',
       detail: 'Texto copiado al portapapeles',
-      life: 2000
+      life: 4000
     })
   }
 

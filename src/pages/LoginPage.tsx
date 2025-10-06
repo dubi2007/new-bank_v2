@@ -34,14 +34,14 @@ const LoginPage: React.FC = () => {
           severity: 'success',
           summary: 'Bienvenido',
           detail: `Hola ${result.titular?.nom_tit}`,
-          life: 3000
+          life: 6000
         })
       } else {
         toast.current?.show({
           severity: 'error',
           summary: 'Error de autenticación',
           detail: 'Número de cuenta o PIN incorrectos',
-          life: 4000
+          life: 8000
         })
       }
     } catch (error) {
@@ -49,7 +49,7 @@ const LoginPage: React.FC = () => {
         severity: 'error',
         summary: 'Error de conexión',
         detail: 'No se pudo conectar al servidor. Intenta nuevamente.',
-        life: 4000
+        life: 8000
       })
     } finally {
       setLoading(false)
@@ -99,32 +99,17 @@ const LoginPage: React.FC = () => {
   )
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '1rem'
-    }}>
+    <div className="min-h-screen bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center p-4">
       <Card 
         header={headerContent}
-        style={{ 
-          width: '100%', 
-          maxWidth: '500px',
-          boxShadow: '0 20px 40px rgba(0,0,0,0.2)'
-        }}
+        className="w-full max-w-md shadow-2xl"
       >
-        <div style={{ padding: '2rem' }}>
-          <h2 style={{ 
-            textAlign: 'center', 
-            margin: '0 0 2rem 0', 
-            color: '#4a5568' 
-          }}>
+        <div className="p-8">
+          <h2 className="text-center mb-8 text-gray-600 text-lg">
             Por favor, ingrese su tarjeta...
           </h2>
           
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-8">
             <div>
               <FloatLabel>
                 <InputText

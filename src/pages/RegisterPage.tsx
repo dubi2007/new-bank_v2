@@ -56,7 +56,7 @@ const RegisterPage: React.FC = () => {
           severity: 'success',
           summary: '¡Cuenta creada exitosamente!',
           detail: `Tu número de cuenta es: ${generatedAccountNumber}`,
-          life: 5000
+          life: 8000
         })
         
         // Redirigir al login después de 3 segundos
@@ -68,7 +68,7 @@ const RegisterPage: React.FC = () => {
           severity: 'error',
           summary: 'Error al crear cuenta',
           detail: 'Verifica que el DNI, email y teléfono no estén registrados.',
-          life: 5000
+          life: 8000
         })
       }
     } catch (error) {
@@ -76,7 +76,7 @@ const RegisterPage: React.FC = () => {
         severity: 'error',
         summary: 'Error de conexión',
         detail: 'No se pudo conectar al servidor. Intenta nuevamente.',
-        life: 5000
+        life: 8000
       })
     } finally {
       setLoading(false)

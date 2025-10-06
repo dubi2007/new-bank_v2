@@ -30,7 +30,7 @@ const AccountOperations: React.FC<AccountOperationsProps> = ({ type, user, onSuc
         severity: 'warn',
         summary: 'Monto inválido',
         detail: 'El monto debe ser mayor a 0',
-        life: 3000
+        life: 6000
       })
       return
     }
@@ -40,7 +40,7 @@ const AccountOperations: React.FC<AccountOperationsProps> = ({ type, user, onSuc
         severity: 'error',
         summary: 'Saldo insuficiente',
         detail: `Tu saldo actual es ${formatCurrency(user.sld_cta)}`,
-        life: 4000
+        life: 7000
       })
       return
     }
@@ -57,7 +57,7 @@ const AccountOperations: React.FC<AccountOperationsProps> = ({ type, user, onSuc
           severity: 'success',
           summary: `${isDeposit ? 'Depósito' : 'Retiro'} exitoso`,
           detail: `${isDeposit ? 'Depósito' : 'Retiro'} de ${formatCurrency(amount)} realizado correctamente`,
-          life: 4000
+          life: 7000
         })
         setAmount(0)
         onSuccess()
@@ -71,7 +71,7 @@ const AccountOperations: React.FC<AccountOperationsProps> = ({ type, user, onSuc
           severity: 'error',
           summary: 'Error en operación',
           detail: `Error al realizar ${isDeposit ? 'el depósito' : 'el retiro'}`,
-          life: 4000
+          life: 7000
         })
       }
     } catch (error) {
@@ -79,7 +79,7 @@ const AccountOperations: React.FC<AccountOperationsProps> = ({ type, user, onSuc
         severity: 'error',
         summary: 'Error de conexión',
         detail: 'No se pudo conectar al servidor. Intenta nuevamente.',
-        life: 4000
+        life: 7000
       })
     } finally {
       setLoading(false)
