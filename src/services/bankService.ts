@@ -66,8 +66,6 @@ export class BankService {
   // Login
   static async login(loginData: LoginData): Promise<CuentaBancaria | null> {
     try {
-      console.log('Iniciando login para cuenta:', loginData.nro_cta)
-      
       // Limpiar datos de login
       const cleanLoginData = this.cleanAndValidateData(loginData)
       
@@ -90,8 +88,6 @@ export class BankService {
         return null
       }
 
-      console.log('=== LOGIN EXITOSO ===')
-      console.log('Datos de usuario:', data)
       return data
     } catch (error) {
       console.error('=== ERROR GENERAL DURANTE LOGIN ===')
@@ -118,7 +114,6 @@ export class BankService {
   // Registro de nueva cuenta
   static async register(registerData: RegisterData): Promise<{ cuenta: CuentaBancaria; titular: any } | null> {
     try {
-      console.log('Iniciando registro de nueva cuenta')
       
       // Limpiar datos de entrada
       const cleanData = this.cleanAndValidateData(registerData)
@@ -135,7 +130,6 @@ export class BankService {
       }
 
       // Primero crear el titular
-      console.log('Creando titular...')
       const titularData = {
         nom_tit: cleanData.nom_tit,
         fir_ape_tit: cleanData.fir_ape_tit,
@@ -156,14 +150,11 @@ export class BankService {
         return null
       }
 
-      console.log('Titular creado exitosamente con ID:', titular.idn_tit)
-
       // Usar número de cuenta predefinido o generar uno nuevo
       let nro_cta: string
       
       if (cleanData.nro_cta_predefinido) {
         nro_cta = cleanData.nro_cta_predefinido
-        console.log('Usando número predefinido:', nro_cta)
         
         // Verificar que el número predefinido no exista
         const exists = await this.checkAccountExists(nro_cta)
@@ -173,12 +164,9 @@ export class BankService {
         }
       } else {
         nro_cta = await this.generateUniqueAccountNumber()
-        console.log('Número generado automáticamente:', nro_cta)
       }
       
       const cci_cta = this.generateCCI()
-
-      console.log('Creando cuenta bancaria...')
 
       // Preparar datos de cuenta bancaria
       const cuentaData = {
