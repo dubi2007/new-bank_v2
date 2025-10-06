@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Card } from 'primereact/card'
 import { InputText } from 'primereact/inputtext'
 import { Button } from 'primereact/button'
 import { FloatLabel } from 'primereact/floatlabel'
-import { Message } from 'primereact/message'
+import { Toast } from 'primereact/toast'
 import { Avatar } from 'primereact/avatar'
 import { Divider } from 'primereact/divider'
 import { BankService } from '../services/bankService'
@@ -13,29 +13,44 @@ import type { LoginData } from '../types'
 
 const LoginPage: React.FC = () => {
   const navigate = useNavigate()
+  const toast = useRef<Toast>(null)
   const [formData, setFormData] = useState<LoginData>({
     nro_cta: '',
     pin_cta: ''
   })
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
   const [showPin, setShowPin] = useState(false)
   const { login } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setError('')
 
     try {
       const result = await BankService.login(formData)
       if (result) {
         login(result)
+        toast.current?.show({
+          severity: 'success',
+          summary: 'Bienvenido',
+          detail: `Hola ${result.titular?.nom_tit}`,
+          life: 3000
+        })
       } else {
-        setError('Número de cuenta o PIN incorrectos')
+        toast.current?.show({
+          severity: 'error',
+          summary: 'Error de autenticación',
+          detail: 'Número de cuenta o PIN incorrectos',
+          life: 4000
+        })
       }
     } catch (error) {
-      setError('Error de conexión. Intenta nuevamente.')
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Error de conexión',
+        detail: 'No se pudo conectar al servidor. Intenta nuevamente.',
+        life: 4000
+      })
     } finally {
       setLoading(false)
     }
@@ -213,14 +228,6 @@ const LoginPage: React.FC = () => {
               </div>
             </div>
 
-            {error && (
-              <Message 
-                severity="error" 
-                text={error}
-                style={{ width: '100%' }}
-              />
-            )}
-
             <Button
               type="submit"
               label={loading ? "VALIDANDO..." : "INGRESAR"}
@@ -264,6 +271,7 @@ const LoginPage: React.FC = () => {
           </div>
         </div>
       </Card>
+      <Toast ref={toast} />
     </div>
   )
 }

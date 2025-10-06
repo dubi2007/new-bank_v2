@@ -1,9 +1,9 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { Card } from 'primereact/card'
 import { InputNumber } from 'primereact/inputnumber'
 import { Button } from 'primereact/button'
 import { FloatLabel } from 'primereact/floatlabel'
-import { Message } from 'primereact/message'
+import { Toast } from 'primereact/toast'
 import { Avatar } from 'primereact/avatar'
 import { BankService } from '../services/bankService'
 import type { CuentaBancaria } from '../types'
@@ -16,9 +16,9 @@ interface AccountOperationsProps {
 }
 
 const AccountOperations: React.FC<AccountOperationsProps> = ({ type, user, onSuccess, onBack }) => {
+  const toast = useRef<Toast>(null)
   const [amount, setAmount] = useState<number>(0)
   const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
 
   const isDeposit = type === 'deposit'
   
@@ -26,17 +26,26 @@ const AccountOperations: React.FC<AccountOperationsProps> = ({ type, user, onSuc
     e.preventDefault()
     
     if (!amount || amount <= 0) {
-      setMessage({ type: 'error', text: 'El monto debe ser mayor a 0' })
+      toast.current?.show({
+        severity: 'warn',
+        summary: 'Monto inválido',
+        detail: 'El monto debe ser mayor a 0',
+        life: 3000
+      })
       return
     }
 
     if (!isDeposit && amount > user.sld_cta) {
-      setMessage({ type: 'error', text: 'Saldo insuficiente' })
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Saldo insuficiente',
+        detail: `Tu saldo actual es ${formatCurrency(user.sld_cta)}`,
+        life: 4000
+      })
       return
     }
 
     setLoading(true)
-    setMessage(null)
 
     try {
       const success = isDeposit 
@@ -44,9 +53,11 @@ const AccountOperations: React.FC<AccountOperationsProps> = ({ type, user, onSuc
         : await BankService.retiro(user.idn_tit, amount)
 
       if (success) {
-        setMessage({ 
-          type: 'success', 
-          text: `${isDeposit ? 'Depósito' : 'Retiro'} realizado exitosamente` 
+        toast.current?.show({
+          severity: 'success',
+          summary: `${isDeposit ? 'Depósito' : 'Retiro'} exitoso`,
+          detail: `${isDeposit ? 'Depósito' : 'Retiro'} de ${formatCurrency(amount)} realizado correctamente`,
+          life: 4000
         })
         setAmount(0)
         onSuccess()
@@ -56,13 +67,20 @@ const AccountOperations: React.FC<AccountOperationsProps> = ({ type, user, onSuc
           onBack()
         }, 2000)
       } else {
-        setMessage({ 
-          type: 'error', 
-          text: `Error al realizar ${isDeposit ? 'el depósito' : 'el retiro'}` 
+        toast.current?.show({
+          severity: 'error',
+          summary: 'Error en operación',
+          detail: `Error al realizar ${isDeposit ? 'el depósito' : 'el retiro'}`,
+          life: 4000
         })
       }
     } catch (error) {
-      setMessage({ type: 'error', text: 'Error de conexión' })
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Error de conexión',
+        detail: 'No se pudo conectar al servidor. Intenta nuevamente.',
+        life: 4000
+      })
     } finally {
       setLoading(false)
     }
@@ -190,14 +208,6 @@ const AccountOperations: React.FC<AccountOperationsProps> = ({ type, user, onSuc
               </div>
             )}
 
-            {message && (
-              <Message 
-                severity={message.type}
-                text={message.text}
-                style={{ width: '100%' }}
-              />
-            )}
-
             <div style={{ 
               display: 'grid', 
               gridTemplateColumns: '1fr 1fr', 
@@ -223,6 +233,7 @@ const AccountOperations: React.FC<AccountOperationsProps> = ({ type, user, onSuc
           </form>
         </div>
       </Card>
+      <Toast ref={toast} />
     </div>
   )
 }

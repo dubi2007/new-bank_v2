@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Card } from 'primereact/card'
 import { InputText } from 'primereact/inputtext'
@@ -6,7 +6,7 @@ import { InputNumber } from 'primereact/inputnumber'
 import { Dropdown } from 'primereact/dropdown'
 import { Button } from 'primereact/button'
 import { FloatLabel } from 'primereact/floatlabel'
-import { Message } from 'primereact/message'
+import { Toast } from 'primereact/toast'
 import { Avatar } from 'primereact/avatar'
 import { Panel } from 'primereact/panel'
 import { BankService } from '../services/bankService'
@@ -14,6 +14,7 @@ import type { RegisterData } from '../types'
 
 const RegisterPage: React.FC = () => {
   const navigate = useNavigate()
+  const toast = useRef<Toast>(null)
   const [formData, setFormData] = useState<RegisterData>({
     nom_tit: '',
     fir_ape_tit: '',
@@ -26,8 +27,6 @@ const RegisterPage: React.FC = () => {
     saldo_inicial: 0
   })
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [success, setSuccess] = useState('')
   const [generatedAccountNumber, setGeneratedAccountNumber] = useState('')
 
   React.useEffect(() => {
@@ -43,7 +42,6 @@ const RegisterPage: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
-    setError('')
 
     try {
       // Usar el número de cuenta que ya se está mostrando en el formulario
@@ -52,21 +50,34 @@ const RegisterPage: React.FC = () => {
         nro_cta_predefinido: generatedAccountNumber // Pasar el número mostrado
       }
       
-      console.log('Registrando con número de cuenta mostrado:', generatedAccountNumber)
-      
       const result = await BankService.register(registerDataWithAccountNumber)
       if (result) {
-        setSuccess(`¡Cuenta creada exitosamente! Número de cuenta: ${generatedAccountNumber}`)
-        setError('')
+        toast.current?.show({
+          severity: 'success',
+          summary: '¡Cuenta creada exitosamente!',
+          detail: `Tu número de cuenta es: ${generatedAccountNumber}`,
+          life: 5000
+        })
+        
         // Redirigir al login después de 3 segundos
         setTimeout(() => {
           navigate('/login')
         }, 3000)
       } else {
-        setError('Error al crear la cuenta. Verifica que el DNI, email y teléfono no estén registrados.')
+        toast.current?.show({
+          severity: 'error',
+          summary: 'Error al crear cuenta',
+          detail: 'Verifica que el DNI, email y teléfono no estén registrados.',
+          life: 5000
+        })
       }
     } catch (error) {
-      setError('Error de conexión. Intenta nuevamente.')
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Error de conexión',
+        detail: 'No se pudo conectar al servidor. Intenta nuevamente.',
+        life: 5000
+      })
     } finally {
       setLoading(false)
     }
@@ -382,22 +393,6 @@ const RegisterPage: React.FC = () => {
                 </div>
               )}
 
-              {error && (
-                <Message 
-                  severity="error" 
-                  text={error}
-                  style={{ width: '100%' }}
-                />
-              )}
-
-              {success && (
-                <Message 
-                  severity="success" 
-                  text={success}
-                  style={{ width: '100%' }}
-                />
-              )}
-
               <div style={{ 
                 display: 'grid', 
                 gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', 
@@ -441,6 +436,7 @@ const RegisterPage: React.FC = () => {
             </form>
           </div>
         </Card>
+        <Toast ref={toast} />
       </div>
     </div>
   )

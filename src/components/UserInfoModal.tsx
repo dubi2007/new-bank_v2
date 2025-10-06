@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Dialog } from 'primereact/dialog'
 import { InputText } from 'primereact/inputtext'
 import { Button } from 'primereact/button'
 import { FloatLabel } from 'primereact/floatlabel'
-import { Message } from 'primereact/message'
+import { Toast } from 'primereact/toast'
 import { Panel } from 'primereact/panel'
 import { Tag } from 'primereact/tag'
 import { BankService } from '../services/bankService'
@@ -17,9 +17,9 @@ interface UserInfoModalProps {
 }
 
 const UserInfoModal: React.FC<UserInfoModalProps> = ({ user, visible, onHide, onUserUpdated }) => {
+  const toast = useRef<Toast>(null)
   const [isEditing, setIsEditing] = useState(false)
   const [loading, setLoading] = useState(false)
-  const [message, setMessage] = useState<{ type: 'success' | 'error', text: string } | null>(null)
   const [editData, setEditData] = useState({
     eml_tit: '',
     tlf_tit: ''
@@ -38,7 +38,6 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({ user, visible, onHide, on
     if (!user.titular) return
 
     setLoading(true)
-    setMessage(null)
 
     try {
       const success = await BankService.updateTitular(
@@ -48,7 +47,12 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({ user, visible, onHide, on
       )
 
       if (success) {
-        setMessage({ type: 'success', text: 'Datos actualizados correctamente' })
+        toast.current?.show({
+          severity: 'success',
+          summary: 'Datos actualizados',
+          detail: 'Tu información ha sido actualizada correctamente',
+          life: 3000
+        })
         setIsEditing(false)
         onUserUpdated()
         
@@ -56,10 +60,20 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({ user, visible, onHide, on
           onHide()
         }, 2000)
       } else {
-        setMessage({ type: 'error', text: 'Error al actualizar los datos' })
+        toast.current?.show({
+          severity: 'error',
+          summary: 'Error al actualizar',
+          detail: 'No se pudieron actualizar los datos',
+          life: 4000
+        })
       }
     } catch (error) {
-      setMessage({ type: 'error', text: 'Error de conexión' })
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Error de conexión',
+        detail: 'No se pudo conectar al servidor',
+        life: 4000
+      })
     } finally {
       setLoading(false)
     }
@@ -77,8 +91,12 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({ user, visible, onHide, on
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
-    setMessage({ type: 'success', text: 'Copiado al portapapeles' })
-    setTimeout(() => setMessage(null), 2000)
+    toast.current?.show({
+      severity: 'info',
+      summary: 'Copiado',
+      detail: 'Texto copiado al portapapeles',
+      life: 2000
+    })
   }
 
   const formatCurrency = (amount: number) => {
@@ -105,7 +123,6 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({ user, visible, onHide, on
             label="Cancelar"
             onClick={() => {
               setIsEditing(false)
-              setMessage(null)
               if (user.titular) {
                 setEditData({
                   eml_tit: user.titular.eml_tit,
@@ -383,15 +400,8 @@ const UserInfoModal: React.FC<UserInfoModalProps> = ({ user, visible, onHide, on
             </div>
           </div>
         </Panel>
-
-        {message && (
-          <Message 
-            severity={message.type}
-            text={message.text}
-            style={{ width: '100%' }}
-          />
-        )}
       </div>
+      <Toast ref={toast} />
     </Dialog>
   )
 }
